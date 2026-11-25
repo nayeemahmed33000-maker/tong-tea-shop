@@ -12,7 +12,7 @@
 // pouchato na — app khola thakle to kono reload-i hoto na. Network fail
 // hole tobei cache theke serve hobe. Logo/icon/mp3: cache-first (ager motoi).
 const CACHE = 'tong-app-v35'; // 2026-11-23: Web Push (owner order alerts) — push + notificationclick handler jog; purono cache activate-e delete hobe
-const ASSETS = ['./', './tong-logo.jpg?v=20261120', './manifest.json', './icon-192.png', './icon-512.png'];
+const ASSETS = ['/', '/tong-logo.jpg?v=20261120', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
@@ -54,16 +54,16 @@ self.addEventListener('push', (e) => {
   try { data = e.data ? e.data.json() : {}; } catch { data = {}; }
   const title = data.title || '🔔 টং — নতুন অর্ডার';
   const body = data.body || 'নতুন অর্ডার এসেছে — অ্যাপ খুলে দেখুন।';
-  const url = data.url || '/manage/#/app/orders';
+  const url = data.url || '/#/app/orders';
   e.waitUntil((async () => {
     const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     if (clients.some((c) => c.visibilityState === 'visible')) return; // app khola — popup-i jothesto
-    await self.registration.showNotification(title, { body, tag: data.tag || 'tong-order', icon: '/manage/icon-192.png', badge: '/manage/icon-192.png', vibrate: [200, 100, 200, 100, 200], data: { url } });
+    await self.registration.showNotification(title, { body, tag: data.tag || 'tong-order', icon: '/icon-192.png', badge: '/icon-192.png', vibrate: [200, 100, 200, 100, 200], data: { url } });
   })());
 });
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
-  const url = (e.notification.data && e.notification.data.url) || '/manage/#/app/orders';
+  const url = (e.notification.data && e.notification.data.url) || '/#/app/orders';
   e.waitUntil((async () => {
     const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const c of clients) {
