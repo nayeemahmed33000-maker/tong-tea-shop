@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>টং ক্যাফে — অ্যাডমিন ড্যাশবোর্ড</title>
+<meta name="description" content="টং ক্যাফে অ্যাডমিন ড্যাশবোর্ড — স্টাফ অনুমোদন, বিক্রি ও বিল এক নজরে।">
+<link rel="icon" type="image/jpeg" href="tong-logo.jpg?v=20261120">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#faf5ea;color:#2b1a0e;line-height:1.5}
+a{color:#5b3a1e}
+header{position:sticky;top:0;background:#2b1a0e;border-bottom:3px solid #d4a94e;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;z-index:5}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;color:#f5ead6}
+.logo img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #d4a94e}
+.logo small{display:block;font-size:10px;color:#d9c39a;letter-spacing:2px}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 16px 60px}
+.card{background:#fff;border:1px solid #e7dcc8;border-radius:14px;padding:20px;margin:16px 0}
+h1{font-size:26px;margin:0 0 4px}
+h2{font-size:19px;margin:0 0 12px}
+.mut{color:#6b7280}
+.btn{border:0;border-radius:9px;padding:11px 18px;font-weight:700;cursor:pointer;font-size:15px;color:#fff;background:#5b3a1e}
+.btn-green{background:#15803d}
+.btn-red{background:#dc2626}
+.btn-ghost{background:#fff;border:1px solid #5b3a1e;color:#5b3a1e}
+.btn-sm{padding:7px 12px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.55;cursor:wait}
+input,select{width:100%;background:#fff;border:1px solid #e7dcc8;color:#2b1a0e;border-radius:9px;padding:12px;font-size:15px;margin:6px 0 12px}
+label{font-size:13px;color:#6b7280;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.stat{background:#fff;border:1px solid #e7dcc8;border-radius:14px;padding:20px 18px;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#d4a94e,transparent)}
+.stat .ic{font-size:26px;line-height:1}
+.stat .n{font-size:38px;font-weight:800;line-height:1.1;margin-top:6px;color:#2b1a0e}
+.stat .l{font-size:13px;color:#6b7280;font-weight:700;margin-top:4px}
+.stat .sub{font-size:12px;color:#6b7280;margin-top:4px}
+.stat.hero{grid-column:span 2;background:linear-gradient(135deg,#2b1a0e,#6b4226);border:1px solid #d4a94e}
+.stat.hero .n,.stat.hero .l,.stat.hero .sub{color:#f5ead6}
+.stat.hero .n{font-size:48px}
+@media(max-width:640px){.stat.hero{grid-column:span 1}.stat .n{font-size:32px}.stat.hero .n{font-size:40px}}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid #e7dcc8;vertical-align:top}
+th{color:#6b7280;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.tblWrap{overflow-x:auto}
+.status{margin:10px 0;font-size:14px}
+.err{color:#dc2626}
+.ok{color:#15803d}
+.hidden{display:none!important}
+.pill{display:inline-block;background:#f5ead6;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700;color:#5b3a1e}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12px;background:#f5ead6;color:#5b3a1e}
+.badge.on{background:#dcfce7;color:#166534}.badge.off{background:#fee2e2;color:#991b1b}
+footer{color:#6b7280;font-size:13px;text-align:center;padding:20px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><img src="tong-logo.jpg?v=20261120" alt="টং ক্যাফে"><span>টং ক্যাফে<small>অ্যাডমিন ড্যাশবোর্ড</small></span></div>
+  <div>
+    <span id="adminChip" class="pill hidden"></span>
+    <button class="btn btn-ghost btn-sm" onclick="location.href='/'" style="background:transparent;border-color:#d4a94e;color:#f5ead6">← সাইটে ফিরুন</button>
+    <button id="signOutBtn" class="btn btn-ghost btn-sm hidden" onclick="signOut()" style="background:transparent;border-color:#d4a94e;color:#f5ead6">সাইন আউট</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- Login: alada admin login system (ClipBlaster-er moto) — shudhu code, owner login na -->
+  <section class="card" id="loginView" style="max-width:520px;margin:20px auto">
+    <h1>🔐 অ্যাডমিন লগইন</h1>
+    <p class="mut">অ্যাডমিন কোড দিন — ড্যাশবোর্ড খুলবে। শুধু মালিকের এই কোডটি জানেন — কাউকে দেবেন না।</p>
+    <label>অ্যাডমিন কোড</label>
+    <input id="adminCode" type="text" placeholder="কোড দিন" autocomplete="off" style="text-transform:uppercase">
+    <p><button class="btn" id="loginBtn" style="width:100%;padding:13px;font-size:16px" onclick="adminLogin()">ড্যাশবোর্ডে ঢুকুন</button></p>
+    <p id="loginMsg" class="status mut"></p>
+    <p class="mut small">কোড ভুলে গেলে মালিকের অ্যাকাউন্টে লগইন করে সেটিংস থেকে নতুন কোড সেট করুন।</p>
+    <p><a href="./#/login">← মালিকের লগইন</a> • <a href="./">সাইটে ফিরুন</a></p>
+  </section>
+
+  <!-- Dashboard: alada (SPA-r vitore na) -->
+  <section id="dashView" class="hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <h1 style="margin:0">🛡️ অ্যাডমিন ড্যাশবোর্ড</h1>
+      <button class="btn btn-ghost btn-sm" onclick="loadAll(true)">↻ রিফ্রেশ</button>
+    </div>
+    <p id="dashMsg" class="status mut"></p>
+
+    <div class="grid" id="statsGrid"></div>
+
+    <section class="card">
+      <h2>⏳ অনুমোদনের অপেক্ষায়: <span id="pendCount">…</span> জন</h2>
+      <div id="pendList">লোড হচ্ছে…</div>
+    </section>
+
+    <section class="card">
+      <h2>👑 মালিকের অ্যাকাউন্টের অনুমোদন</h2>
+      <div id="pendOwners">লোড হচ্ছে…</div>
+      <p class="mut small">কেউ মালিকের অ্যাকাউন্ট তৈরি করতে গেলে এখানে অনুরোধ আসবে — অনুমোদন করলেই লগইন করতে পারবে। বাতিল করলে অনুরোধ মুছে যাবে।</p>
+    </section>
+
+    <section class="card">
+      <h2>👥 স্টাফ</h2>
+      <div class="tblWrap"><table>
+        <thead><tr><th>নাম</th><th>ভূমিকা</th><th>স্ট্যাটাস</th><th>যোগদান</th><th>শেষ লগইন</th><th></th></tr></thead>
+        <tbody id="staffBody"><tr><td colspan="6" class="mut">লোড হচ্ছে…</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section class="card">
+      <h2>🧾 সাম্প্রতিক বিল</h2>
+      <div id="billsBox">লোড হচ্ছে…</div>
+    </section>
+    <p class="mut small">অনুমোদন করলেই স্টাফ PIN দিয়ে লগইন করতে পারবে। বন্ধ করলে PIN লগইন বন্ধ হয়ে যাবে। বাতিল করলে অ্যাকাউন্ট মুছে যাবে। মালিকের অ্যাকাউন্টের অনুরোধ অনুমোদন করলে সেই মালিকও লগইন করতে পারবে।</p>
+  </section>
+</div>
+
+<footer>টং ক্যাফে — অ্যাডমিন শুধু মালিকের জন্য। <a href="./">সাইটে ফিরুন</a></footer>
+
+<script>
+// Standalone admin page (2026-11-20, user order: "Tong Er Admin Log In System
+// Thakbe, Admin Er Dashboard Alada Thakbe") — ClipBlaster-er admin.html-er moto
+// sompurno alada page: nijer code login + nijer dashboard. SPA-r index.html-er
+// sathe kono somporko nei. Ager /api/admin/* endpoint-guloi use hoy.
+const API_BASE='https://tong-cafe-api.nayeemahmed33000.workers.dev';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tk=n=>'৳'+Number(n||0).toLocaleString('en-US');
+const ROLE_LABEL={waiter:'ওয়েটার',cashier:'ক্যাশিয়ার',kitchen:'কিচেন',owner:'মালিক'};
+const PAY_LABEL={cash:'ক্যাশ',bkash:'bKash',nagad:'Nagad',card:'কার্ড','':'বাকি'};
+function token(){return localStorage.getItem('tong_admin_token')||''}
+async function api(path,body,method){
+  const headers={'Content-Type':'application/json'};
+  const t=token(); if(t) headers['Authorization']='Bearer '+t;
+  let r;
+  try{ r=await fetch(API_BASE+path,{method:method||(body?'POST':'GET'),headers:headers,body:body?JSON.stringify(body):undefined,cache:'no-store'}); }
+  catch(e){ throw new Error('network'); }
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error||('http_'+r.status));
+  return d;
+}
+function showLogin(){$('loginView').classList.remove('hidden');$('dashView').classList.add('hidden');$('adminChip').classList.add('hidden');$('signOutBtn').classList.add('hidden');stopPoll();}
+function showDash(name){$('loginView').classList.add('hidden');$('dashView').classList.remove('hidden');$('adminChip').classList.remove('hidden');$('adminChip').textContent='👑 '+name;$('signOutBtn').classList.remove('hidden');}
+async function adminLogin(){
+  const code=$('adminCode').value.trim().toUpperCase();
+  if(!code){$('loginMsg').textContent='কোডটি দিন।';$('loginMsg').className='status err';return;}
+  $('loginBtn').disabled=true; $('loginBtn').textContent='ঢুকছি…';
+  try{
+    const d=await api('/api/admin/login',{code:code});
+    localStorage.setItem('tong_admin_token',d.token);
+    $('loginMsg').textContent='';
+    showDash(d.name||'অ্যাডমিন');
+    await loadAll(true);
+  }catch(e){
+    $('loginMsg').textContent = e.message==='code_not_set' ? 'অ্যাডমিন কোড এখনো সেট হয়নি — মালিকের অ্যাকাউন্টে লগইন করে সেটিংস থেকে কোড সেট করুন।' : (e.message==='invalid_code' ? '❌ কোডটি সঠিক নয় — আবার চেষ্টা করুন।' : (e.message==='network' ? 'সার্ভারে পৌঁছানো যায়নি — ইন্টারনেট চেক করে আবার চেষ্টা করুন।' : 'কিছু একটা ভুল হয়েছে — আবার চেষ্টা করুন।'));
+    $('loginMsg').className='status err';
+  }
+  $('loginBtn').disabled=false; $('loginBtn').textContent='ড্যাশবোর্ডে ঢুকুন';
+}
+function signOut(){
+  localStorage.removeItem('tong_admin_token');
+  showLogin();
+}
+let ADMIN_SIG='';
+let __poll=null;
+function stopPoll(){ if(__poll){ clearInterval(__poll); __poll=null; } }
+function startPoll(){
+  stopPoll();
+  __poll=setInterval(()=>{ if(!$('dashView').classList.contains('hidden')) loadAll(); else stopPoll(); },2000);
+}
+async function loadAll(force){
+  $('dashMsg').textContent='লোড হচ্ছে…'; $('dashMsg').className='status mut';
+  try{
+    const [s,st,bl,po]=await Promise.all([api('/api/admin/stats'),api('/api/admin/staff'),api('/api/admin/bills'),api('/api/admin/pending-owners')]);
+    const sig=JSON.stringify([s.stats,st.staff,bl.bills,po.owners]);
+    if(!force && sig===ADMIN_SIG){ $('dashMsg').textContent=''; return; }
+    ADMIN_SIG=sig;
+    renderStats(s.stats); renderStaff(st.staff||[]); renderBills(bl.bills||[]); renderOwners(po.owners||[]);
+    $('dashMsg').textContent='';
+    startPoll();
+  }catch(e){
+    if(e.message==='unauthorized'||e.message==='অনুমতি নেই'||e.message==='লগইন প্রয়োজন'){ localStorage.removeItem('tong_admin_token'); showLogin(); $('loginMsg').textContent='সেশন শেষ হয়েছে — আবার কোড দিয়ে ঢুকুন।'; $('loginMsg').className='status err'; return; }
+    $('dashMsg').textContent='ড্যাশবোর্ড লোড হয়নি — ইন্টারনেট চেক করে রিফ্রেশ চাপুন।';
+    $('dashMsg').className='status err';
+  }
+}
+function renderStats(st){
+  const cards=[
+    {cls:'hero',ic:'💰',n:tk(st.totalSales),l:'মোট বিক্রি',sub:st.totalBills+'টি বিল'},
+    {cls:'',ic:'📅',n:tk(st.todaySales),l:'আজকের বিক্রি',sub:st.todayBills+'টি বিল'},
+    {cls:'',ic:'🧾',n:st.totalBills,l:'মোট বিল'},
+    {cls:'',ic:'👥',n:st.staffCount,l:'স্টাফ'},
+    {cls:'',ic:'⏳',n:st.pendingApprovals,l:'অনুমোদনের অপেক্ষায়'}
+  ];
+  $('statsGrid').innerHTML=cards.map(c=>'<div class="stat '+c.cls+'"><div class="ic">'+c.ic+'</div><div class="n">'+c.n+'</div><div class="l">'+c.l+'</div>'+(c.sub?'<div class="sub">'+c.sub+'</div>':'')+'</div>').join('');
+}
+function renderStaff(list){
+  const pend=list.filter(s=>!s.approved);
+  $('pendCount').textContent=pend.length;
+  $('pendList').innerHTML=pend.length ? pend.map(s=>'<p>👤 <b>'+esc(s.name)+'</b> — '+esc(ROLE_LABEL[s.role]||s.role)+' <span class="mut small">'+esc((s.created_at||'').slice(0,16).replace('T',' '))+'</span><br><button class="btn btn-sm" onclick="adminApprove(\''+esc(s.id)+'\')">✅ অনুমোদন করুন</button> <button class="btn btn-red btn-sm" onclick="adminDelStaff(\''+esc(s.id)+'\')">❌ বাতিল করুন</button></p>').join('') : '<p class="mut">কোনো অপেক্ষমান স্টাফ নেই — সবাই অনুমোদিত।</p>';
+  if(!list.length){ $('staffBody').innerHTML='<tr><td colspan="6" class="mut">এখনো কোনো স্টাফ নেই।</td></tr>'; return; }
+  $('staffBody').innerHTML=list.map(s=>{
+    const status=!s.approved ? '<span class="badge">⏳ অপেক্ষায়</span>' : (s.active ? '<span class="badge on">✅ অনুমোদিত</span>' : '<span class="badge off">⛔ বন্ধ</span>');
+    const last=s.last_login_at ? esc(s.last_login_at.slice(0,16).replace('T',' ')) : '—';
+    const btns=(!s.approved ? '<button class="btn btn-sm" onclick="adminApprove(\''+esc(s.id)+'\')">✅ অনুমোদন</button> ' : '')+(s.approved ? '<button class="btn btn-ghost btn-sm" onclick="adminSetActive(\''+esc(s.id)+'\','+(s.active?0:1)+')">'+(s.active?'⛔ বন্ধ করুন':'✅ চালু করুন')+'</button> ' : '')+'<button class="btn btn-red btn-sm" onclick="adminDelStaff(\''+esc(s.id)+'\')">🗑️ মুছুন</button>';
+    return '<tr><td><b>'+esc(s.name)+'</b></td><td>'+esc(ROLE_LABEL[s.role]||s.role)+'</td><td>'+status+'</td><td>'+esc((s.created_at||'').slice(0,10))+'</td><td>'+last+'</td><td>'+btns+'</td></tr>';
+  }).join('');
+}
+function renderBills(list){
+  const el=$('billsBox');
+  if(!list.length){ el.innerHTML='<p class="mut">এখনো কোনো বিল হয়নি।</p>'; return; }
+  el.innerHTML='<div class="tblWrap"><table><thead><tr><th>অর্ডার</th><th>টেবিল</th><th>মোট</th><th>পেমেন্ট</th><th>অবস্থা</th><th>বিল করেছে</th><th>সময়</th></tr></thead><tbody>'+list.map(o=>'<tr><td><b>#'+esc(String(o.id||'').slice(0,8))+'</b></td><td>'+esc(o.table_name||'—')+'</td><td><b>'+tk(o.total)+'</b></td><td>'+esc(PAY_LABEL[o.payment_method]||o.payment_method||'—')+'</td><td>'+(o.paid?'<span class="badge on">পরিশোধিত</span>':'<span class="badge">বাকি</span>')+'</td><td>'+esc(o.billed_by_name||'—')+'</td><td>'+esc((o.created_at||'').slice(0,16).replace('T',' '))+'</td></tr>').join('')+'</tbody></table></div>';
+}
+function renderOwners(list){
+  const el=$('pendOwners');
+  if(!list.length){ el.innerHTML='<p class="mut">কোনো অপেক্ষমান মালিকের অনুরোধ নেই।</p>'; return; }
+  el.innerHTML=list.map(o=>'<p>👑 <b>'+esc(o.name)+'</b> — '+esc(o.email)+' <span class="mut small">'+esc((o.created_at||'').slice(0,16).replace('T',' '))+'</span><br><button class="btn btn-sm" onclick="adminApproveOwner(\''+esc(o.id)+'\')">✅ অনুমোদন করুন</button> <button class="btn btn-red btn-sm" onclick="adminDelOwner(\''+esc(o.id)+'\')">❌ বাতিল করুন</button></p>').join('');
+}
+async function adminApproveOwner(id){ try{ await api('/api/admin/owners/'+id+'/approve',{}); $('dashMsg').textContent='✅ মালিকের অ্যাকাউন্ট অনুমোদিত হয়েছে — এখন লগইন করতে পারবে।'; $('dashMsg').className='status ok'; ADMIN_SIG=''; loadAll(true); }catch(e){ $('dashMsg').textContent=e.message; $('dashMsg').className='status err'; } }
+async function adminDelOwner(id){ if(!confirm('মালিকের অনুরোধ বাতিল করবেন? এই কাজ ফেরানো যাবে না।')) return; try{ await api('/api/admin/owners/'+id,{},'DELETE'); $('dashMsg').textContent='✅ মালিকের অনুরোধ বাতিল করা হয়েছে।'; $('dashMsg').className='status ok'; ADMIN_SIG=''; loadAll(true); }catch(e){ $('dashMsg').textContent=e.message; $('dashMsg').className='status err'; } }
+async function adminApprove(id){ try{ await api('/api/admin/staff/'+id+'/approve',{}); $('dashMsg').textContent='✅ স্টাফ অনুমোদিত হয়েছে — এখন লগইন করতে পারবে।'; $('dashMsg').className='status ok'; ADMIN_SIG=''; loadAll(true); }catch(e){ $('dashMsg').textContent=e.message; $('dashMsg').className='status err'; } }
+async function adminSetActive(id,active){ try{ await api('/api/admin/staff/'+id+'/set-active',{active:active}); $('dashMsg').textContent=active?'✅ স্টাফ চালু হয়েছে।':'✅ স্টাফ বন্ধ হয়েছে — PIN লগইন আর হবে না।'; $('dashMsg').className='status ok'; ADMIN_SIG=''; loadAll(true); }catch(e){ $('dashMsg').textContent=e.message; $('dashMsg').className='status err'; } }
+async function adminDelStaff(id){ if(!confirm('স্টাফ মুছে ফেলবেন? এই কাজ ফেরানো যাবে না।')) return; try{ await api('/api/admin/staff/'+id,{},'DELETE'); $('dashMsg').textContent='✅ স্টাফ মোছা হয়েছে।'; $('dashMsg').className='status ok'; ADMIN_SIG=''; loadAll(true); }catch(e){ $('dashMsg').textContent=e.message; $('dashMsg').className='status err'; } }
+// On load: saved admin token thakle server-e check — shudhu ashol 401-i
+// logout korabe; network blip-e token muchbe na (ClipBlaster-er moto).
+(async()=>{
+  const t=token(); if(!t){ showLogin(); return; }
+  showDash('অ্যাডমিন');
+  try{ const s=await api('/api/admin/stats'); renderStats(s.stats); }
+  catch(e){
+    if(e.message==='unauthorized'||e.message==='অনুমতি নেই'||e.message==='লগইন প্রয়োজন'){ localStorage.removeItem('tong_admin_token'); showLogin(); $('loginMsg').textContent='সেশন শেষ হয়েছে — আবার কোড দিয়ে ঢুকুন।'; $('loginMsg').className='status err'; return; }
+    $('dashMsg').textContent='সার্ভারে পৌঁছানো যায়নি — রিফ্রেশ চাপুন।';
+    $('dashMsg').className='status err';
+  }
+  await loadAll(true);
+})();
+</script>
+</body>
+</html>
